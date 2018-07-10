@@ -1,0 +1,16 @@
+---
+resources:
+- name: my-repo
+  type: git
+  source:
+    uri: https://github.com/Suhasini37/Test.git
+    branch: master
+    
+jobs:
+  - name: job-list-resource
+    plan: 
+  -   get: my-repo
+      trigger: true
+  -   task: task-list-files
+      file: my-repo/tasks/task-list-resources.yml
+
