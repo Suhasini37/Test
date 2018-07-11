@@ -5,12 +5,28 @@ resources:
   source:
     uri: https://github.com/Suhasini37/Test.git
     branch: master
+- name: version
+  type: semver
+  source:
+    driver: s3
+    initial_version: 0.0.1
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    bucket: ((version_aws_bucket))
+    key: version
     
 jobs:
   - name: job-list-resource
     plan: 
-  -   get: my-repo
+    - get: my-repo
       trigger: true
-  -   task: task-list-files
+    - task: task-list-files
       file: my-repo/tasks/task-list-resources.yml
-
+  - name: job-bump-artifact-version
+    plan:
+    - get: my-repo
+      trigger: true
+      passed: [ job-list-resource ]
+    - get: version
+      params: {bump: patch}
+      
